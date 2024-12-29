@@ -11,8 +11,8 @@ pydantic = "^2.5.3"
 beautifulsoup4 = "^4.12.3"
 pandas = "^2.2.0"
 tqdm = "^4.66.1"
-selenium = "^4.17.2"
-webdriver-manager = "^4.0.1"
+selenium = "^4.27.1"
+webdriver-manager = "^4.0.2"
 
 
 [build-system]

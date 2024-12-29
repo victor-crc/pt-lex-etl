@@ -155,7 +155,9 @@ def _connect_to_website(headless: bool = True) -> WebDriver:
 
 def _connect_locally_to_website(headless: bool = True) -> WebDriver:
     options = Options()
-    options.headless = headless
+    # options.headless = headless
+    if headless:
+        options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     chrome_service = Service(ChromeDriverManager().install())
