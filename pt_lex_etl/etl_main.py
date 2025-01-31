@@ -1,5 +1,4 @@
 from pydantic import validate_call
-
 from . import schemas, web_scraper, web_parser, file_parser
 
 
@@ -7,6 +6,8 @@ from . import schemas, web_scraper, web_parser, file_parser
 def etl_published_diploma(
     diploma_metadata: schemas.DiplomaMetadata,
     local_connection: bool = True,
+    browser_host: str = "127.0.0.1",
+    browser_port: str = "4444",
     headless: bool = True,
 ) -> list[str]:
     """
@@ -17,6 +18,8 @@ def etl_published_diploma(
     html_content = web_scraper.scrape_html(
         diploma_metadata=diploma_metadata,
         local_connection=local_connection,
+        browser_host=browser_host,
+        browser_port=browser_port,
         headless=headless,
     )
     diploma_passages = web_parser.parse_html(html_content, diploma_metadata.version)

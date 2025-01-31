@@ -18,8 +18,14 @@ from .utils import exceptions
 
 # Constants for Selenium
 URL = "https://dre.pt/"
-SEARCH_ELEMENT_LOC = (By.ID, "b2-b2-Input_ActiveItem2")  # previous: "b2-b2-Input_ActiveItem"
-DIPLOMA_CONTAINER_LOC = (By.ID, "b7-b11-InjectHTMLWrapper")  # previous: "b7-b8-InjectHTMLWrapper"
+SEARCH_ELEMENT_LOC = (
+    By.ID,
+    "b2-b2-Input_ActiveItem2",
+)  # previous: "b2-b2-Input_ActiveItem"
+DIPLOMA_CONTAINER_LOC = (
+    By.ID,
+    "b7-b11-InjectHTMLWrapper",
+)  # previous: "b7-b8-InjectHTMLWrapper"
 CONSOLIDATED_VERSION_LOC = (
     By.XPATH,
     "//button[@title='Consultar versão consolidada']",
@@ -43,13 +49,15 @@ FIELDNAMES = {
 def scrape_html(
     diploma_metadata: schemas.DiplomaMetadata,
     local_connection: bool = True,
+    browser_host: str = "127.0.0.1",
+    browser_port: str = "4444",
     headless: bool = True,
     attempts_limit: int = 3,
 ) -> str:
     browser = (
         _connect_locally_to_website(headless)
         if local_connection
-        else _connect_to_website(headless)
+        else _connect_to_website(headless, browser_host, browser_port)
     )
     # TODO: Validate scraped html (with pydantic)
     try:
@@ -103,10 +111,10 @@ def scrape_multiple_to_disk(
         if local_connection
         else _connect_to_website(headless)
     )
-    
+
     with open(error_docs_path_and_name, "w") as file:
         file.write("")
-    
+
     for metadata in tqdm(diplomas_metadata):
         try:
             html = _navigate_and_extract(
@@ -143,12 +151,16 @@ def scrape_multiple_to_disk(
     print("All scraping, parsing, and exporting completed! 💪")
 
 
-def _connect_to_website(headless: bool = True) -> WebDriver:
+def _connect_to_website(
+    headless: bool = True, browser_host: str = "127.0.0.1", browser_port: str = "4444"
+) -> WebDriver:
     options = Options()
     options.headless = headless
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    browser = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=options)
+    browser = webdriver.Remote(
+        f"http://{browser_host}:{browser_port}/wd/hub", options=options
+    )
     browser.get(URL)
     return browser
 
